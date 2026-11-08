@@ -1,0 +1,143 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #74ebd5, #9face6);
+    padding: 30px 15px;
+}
+
+.container {
+    max-width: 950px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+}
+
+h1, h2 {
+    text-align: center;
+    color: #243b67;
+}
+
+.subtitle {
+    text-align: center;
+    margin: 12px;
+    color: #666;
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin: 30px auto;
+    max-width: 550px;
+}
+
+input {
+    flex: 1;
+    min-width: 0;
+    padding: 14px;
+    border: 2px solid #9face6;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+button {
+    padding: 14px 25px;
+    background: #4169e1;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #243b67;
+}
+
+#message {
+    text-align: center;
+    color: #d32f2f;
+    margin: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.current-weather {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    background: #eaf4ff;
+    padding: 30px;
+    border-radius: 15px;
+    margin: 25px 0;
+}
+
+.temperature {
+    text-align: center;
+}
+
+.temperature h1 {
+    font-size: 45px;
+    margin: 10px;
+}
+
+#weather-icon {
+    font-size: 55px;
+}
+
+.details p {
+    margin: 15px;
+    font-size: 17px;
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.forecast-card {
+    background: #f0f5ff;
+    padding: 18px 10px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.forecast-card h2 {
+    font-size: 30px;
+    margin: 12px;
+}
+
+.forecast-card p {
+    margin: 8px 0;
+    font-size: 13px;
+}
+
+@media(max-width: 600px) {
+    .container {
+        padding: 18px;
+    }
+
+    .search-box {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+
+    .current-weather {
+        flex-direction: column;
+    }
+}
