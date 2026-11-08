@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Weather Forecast App</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌤 Weather Forecast</h1>
+    <p class="subtitle">Check weather anywhere in the world</p>
+
+    <div class="search-box">
+        <input type="text" id="city"
+               placeholder="Enter city name">
+
+        <button onclick="getWeather()">Search</button>
+    </div>
+
+    <p id="message"></p>
+
+    <div id="weather-result" class="hidden">
+
+        <h2 id="city-name"></h2>
+
+        <div class="current-weather">
+            <div class="temperature">
+                <span id="weather-icon">🌤️</span>
+                <h1 id="temperature"></h1>
+                <p id="condition"></p>
+            </div>
+
+            <div class="details">
+                <p>🌡 Feels Like: <span id="feels"></span>°C</p>
+                <p>💧 Humidity: <span id="humidity"></span>%</p>
+                <p>💨 Wind Speed: <span id="wind"></span> km/h</p>
+            </div>
+        </div>
+
+        <h2>7-Day Forecast</h2>
+
+        <div id="forecast" class="forecast"></div>
+
+    </div>
+
+</div>
+
+<script>
+function weatherInfo(code) {
+    if (code === 0) return ["Clear Sky", "☀️"];
+    if ([1, 2, 3].includes(code)) return ["Partly Cloudy", "⛅"];
+    if ([45, 48].includes(code)) return ["Foggy", "🌫️"];
+    if ([51, 53, 55, 56, 57].includes(code)) return ["Drizzle", "🌦️"];
+    if ([61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return ["Rainy", "🌧️"];
+    if ([71, 73, 75, 77, 85, 86].includes(code)) return ["Snowy", "❄️"];
+    if ([95, 96, 99].includes(code)) return ["Thunderstorm", "⛈️"];
+
+    return ["Unknown", "🌤️"];
+}
+
+async function getWeather() {
+    const city = document.getElementById("city").value.trim();
+    const message = document.getElementById("message");
+    const result = document.getElementById("weather-result");
+
+    if (!city) {
+        message.innerText = "Please enter a city name!";
+        return;
+    }
+
+    message.innerText = "Loading weather...";
+    result.classList.add("hidden");
+
+    try {
+        const response = await fetch(
+            `/weather?city=${encodeURIComponent(city)}`
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Weather not available");
+        }
+
+        const current = data.current;
+        const daily = data.daily;
+
+        const info = weatherInfo(current.weather_code);
+
+        document.getElementById("city-name").innerText =
+            data.city + ", " + data.country;
+
+        document.getElementById("temperature").innerText =
+            current.temperature_2m + "°C";
+
+        document.getElementById("weather-icon").innerText = info[1];
+
+        document.getElementById("condition").innerText = info[0];
+
+        document.getElementById("feels").innerText =
+            current.apparent_temperature;
+
+        document.getElementById("humidity").innerText =
+            current.relative_humidity_2m;
+
+        document.getElementById("wind").innerText =
+            current.wind_speed_10m;
+
+        const forecast = document.getElementById("forecast");
+        forecast.innerHTML = "";
+
+        daily.time.forEach((date, index) => {
+            const dayInfo = weatherInfo(daily.weather_code[index]);
+
+            const card = document.createElement("div");
+            card.className = "forecast-card";
+
+            const day = new Date(date + "T00:00:00")
+                .toLocaleDateString("en-US", {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric"
+                });
+
+            card.innerHTML = `
+                <h3>${day}</h3>
+                <h2>${dayInfo[1]}</h2>
+                <p>${dayInfo[0]}</p>
+                <p>Max: ${daily.temperature_2m_max[index]}°C</p>
+                <p>Min: ${daily.temperature_2m_min[index]}°C</p>
+                <p>Rain: ${daily.precipitation_probability_max[index] ?? "N/A"}%</p>
+            `;
+
+            forecast.appendChild(card);
+        });
+
+        message.innerText = "";
+        result.classList.remove("hidden");
+
+    } catch (error) {
+        message.innerText = error.message;
+    }
+}
+
+document.getElementById("city").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        getWeather();
+    }
+});
+</script>
+
+</body>
+</html>
